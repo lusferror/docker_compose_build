@@ -1,0 +1,33 @@
+#con este documento creo la imagen - contenedor para poder usar entornos virtuales
+#declaro la version
+version: "3.8"
+#luego se agregan los servicios a instalar
+services:
+  #nombre del contenedor
+  posgresito :
+    image : postgres   #indico la imagen que es el programa
+    ports :
+      - "5432:5432" #indico el puerto de docker : puerto de la pc
+    links :     #vincula con otro contenedor
+      - pythoncito #nombre del nuevo contenedor
+    environment :    #variables de entorno
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:    #para guardar los datos
+      - post_py:/var/lib/postgresql/data
+  pythoncito :
+    build : .   #el . significa que se trabajará en la carpeta actual donde está docker-compose
+    ports:
+      - "4000:4000"
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_RUN_PORT: 4000
+
+    volumes:    #para guardar los datos
+      - .:/code
+volumes:
+  post_py:
